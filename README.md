@@ -62,6 +62,44 @@ Si querés que alguien de verdad no sepa cuánto gana el taller, dejale **apagad
 - Un staff puede borrar lo suyo dentro de las primeras 24 horas — para que arregle
   un tipeo del día sin poder tocar el mes cerrado. Después, solo un admin.
 
+## PLANES MENSUALES
+
+Suscripciones y cargos fijos: Adobe, hosting, alquiler, lo que se cobre solo
+todos los meses. Se cargan **una vez** desde la pestaña Planes y el gasto
+aparece cada mes sin que nadie lo escriba.
+
+Al agregar un plan indicás nombre, monto, categoría, día de cobro y el primer
+mes que se cobró. En ese momento se generan de una vez los cargos de todos los
+meses desde ese primer mes hasta hoy, y de ahí en adelante cada mes se suma
+solo al entrar. **Nunca adelanta meses futuros.**
+
+En la lista de movimientos estos cargos llevan la etiqueta **AUTO**.
+
+### Cancelar
+
+`Cancelar` marca el último mes cobrado (el mes en curso) y corta desde el
+siguiente. Lo ya cobrado queda intacto — el historial no se toca nunca. Un plan
+cancelado se puede reactivar; solo se puede borrar de verdad si nunca generó
+un cargo, para no dejar movimientos huérfanos.
+
+### La carga fija mensual
+
+Arriba de la pestaña se ve el total de los planes activos, y el mismo número
+anualizado. Es el piso que el taller tiene que cubrir todos los meses antes de
+ganar un peso — el número que conviene comparar contra el margen bruto.
+
+### Detalles que ya están resueltos
+
+- **No duplica.** Una bitácora aparte registra qué mes se generó para qué plan.
+  Correr el devengo diez veces genera lo mismo que correrlo una.
+- **Borrar un cargo no lo resucita.** Si eliminás el movimiento de un mes que
+  no se llegó a cobrar, no vuelve a aparecer.
+- **Día 31 en un mes corto** cae en el último día del mes, no se pierde.
+- **Solo admin.** Los planes son estructura de costos: un staff no los ve ni
+  puede ejecutar el devengo, ni siquiera llamando la API directo.
+
+---
+
 ## CERRAR EL REGISTRO (hacelo cuando el equipo ya esté adentro)
 
 Mientras el registro esté abierto, cualquiera con el link puede crearse una cuenta.
@@ -104,6 +142,8 @@ Proyecto Supabase: **bigbangworkshops** (`cglankaljvhcdyzhyooo`)
 | `perfiles` | Nombre, correo, rol, activo y los tres permisos |
 | `cuentas` | Plan de cuentas |
 | `movimientos` | Un registro por ingreso o egreso |
+| `suscripciones` | Los planes mensuales. `mes_fin` null = vigente |
+| `suscripciones_generadas` | Bitácora de devengo: qué mes ya se generó |
 | `v_movimientos` | Vista de lectura con nombre de cuenta, grupo y quién registró |
 
 La administración de miembros pasa por la función `admin_guardar_miembro`, que
@@ -133,3 +173,5 @@ gris, signo), no por color nuevo. Pendiente de ratificar en Governance 09.
 - [ ] Enlazar cuentas de costo con el doc 11 de costos de proveedor
 - [ ] Cierre de mes bloqueado (que no se editen meses ya cerrados)
 - [ ] Historial de cambios de permisos (quién le dio qué acceso a quién)
+- [ ] Aviso cuando un plan sube de precio
+- [ ] Planes anuales y trimestrales (hoy solo mensuales)

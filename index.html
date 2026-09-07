@@ -126,6 +126,31 @@ form{display:flex;flex-direction:column;gap:14px}
 .note{border-left:2px solid var(--yellow);padding:10px 0 10px 13px;color:var(--gray);font-size:13px;margin-top:18px}
 .note b{color:var(--white)}
 
+/* ---------- planes ---------- */
+.fijo{background:var(--card);border:1px solid var(--line);padding:16px;margin-bottom:20px}
+.fijo .rule{display:block;margin-bottom:7px}
+.fijo .val{font-family:var(--fd);font-size:38px;line-height:1;color:var(--yellow);font-variant-numeric:tabular-nums;display:block}
+.fijo .foot{font-family:var(--fr);font-size:11px;color:var(--steel);margin-top:6px}
+
+.plan{display:grid;grid-template-columns:3px 1fr auto;gap:12px;align-items:center;
+  background:var(--card);border:1px solid var(--line);padding:12px 13px;margin-bottom:8px}
+.plan .stripe{align-self:stretch;background:var(--yellow)}
+.plan.off{opacity:.5}
+.plan.off .stripe{background:var(--steel)}
+.plan-n{font-weight:600;font-size:14px;line-height:1.3}
+.plan-d{font-family:var(--fr);font-size:11px;color:var(--steel);margin-top:3px}
+.plan-r{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.plan-m{font-family:var(--fd);font-size:21px;font-variant-numeric:tabular-nums;color:var(--white)}
+.plan-b{background:none;border:0;cursor:pointer;padding:2px 0;font-family:var(--fr);
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+.plan-b:hover{color:var(--yellow)}
+.plan-b.danger:hover{color:var(--loss)}
+.sub-h{font-family:var(--fr);font-size:11px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--steel);margin:22px 0 10px}
+.auto{display:inline-block;font-family:var(--fr);font-size:8px;font-weight:600;
+  letter-spacing:.14em;padding:2px 5px;border:1px solid var(--line);color:var(--steel);
+  vertical-align:middle;margin-left:6px}
+
 /* ---------- equipo ---------- */
 .pcard{background:var(--card);border:1px solid var(--line);margin-bottom:12px}
 .pcard.inactivo{opacity:.55}
@@ -216,6 +241,8 @@ form{display:flex;flex-direction:column;gap:14px}
       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 4.5h12M2.5 8.5h12M2.5 12.5h8"/></svg>Movimientos</button>
     <button role="tab" aria-selected="false" data-tab="pl" id="tab-pl" hidden>
       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 14V9M6.8 14V4M11.2 14V7M15.5 14V2.5"/></svg>P&amp;L</button>
+    <button role="tab" aria-selected="false" data-tab="planes" id="tab-planes" hidden>
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8.5a6.5 6.5 0 1 1-1.9-4.6"/><path d="M8.5 5v3.7l2.6 1.5"/><path d="M15 2v3.4h-3.4"/></svg>Planes</button>
     <button role="tab" aria-selected="false" data-tab="eq" id="tab-eq" hidden>
       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8.5" cy="6" r="2.6"/><path d="M3.5 14c0-2.5 2.2-4.2 5-4.2s5 1.7 5 4.2"/></svg>Equipo</button>
   </nav>
@@ -272,6 +299,43 @@ form{display:flex;flex-direction:column;gap:14px}
         operación: nómina, alquiler, software, marketing, envíos y equipo.
       </div>
       <button class="btn ghost" id="csv" style="margin-top:18px">Descargar mes en CSV</button>
+    </section>
+
+    <section class="panel" id="p-planes">
+      <h2 class="sec">PLANES MENSUALES</h2>
+      <p class="sec-note">Suscripciones y cargos fijos. Los cargas una vez y el gasto se descuenta solo todos los meses, hasta que los canceles.</p>
+
+      <div class="fijo">
+        <span class="rule">Carga fija mensual</span>
+        <span class="val" id="fijo-total">$0</span>
+        <div class="foot" id="fijo-foot">Sin planes activos</div>
+      </div>
+
+      <form id="fplan" autocomplete="off">
+        <label class="field"><span class="rule">Nombre del plan</span>
+          <input type="text" id="pl-nombre" placeholder="Adobe Creative Cloud" required></label>
+        <div class="row2">
+          <label class="field"><span class="rule">Monto USD</span>
+            <input type="number" id="pl-monto" step="0.01" min="0.01" inputmode="decimal" placeholder="0.00" required></label>
+          <label class="field"><span class="rule">D&iacute;a de cobro</span>
+            <input type="number" id="pl-dia" min="1" max="31" value="1" required></label>
+        </div>
+        <label class="field"><span class="rule">Categor&iacute;a</span><select id="pl-cta" required></select></label>
+        <label class="field"><span class="rule">Primer mes cobrado</span>
+          <input type="month" id="pl-desde" required></label>
+        <label class="field"><span class="rule">Nota</span>
+          <input type="text" id="pl-nota" placeholder="Plan, cuenta, referencia"></label>
+        <button class="btn" type="submit" id="pl-save">Agregar plan</button>
+      </form>
+
+      <div id="planes-lista"></div>
+
+      <div class="note" style="margin-top:22px">
+        <b>C&oacute;mo funciona.</b> Al agregar un plan se generan de una vez los cargos de todos
+        los meses desde el primer mes cobrado hasta hoy, y de ah&iacute; en adelante cada mes se
+        suma solo. Nunca adelanta meses futuros. <b>Cancelar</b> corta desde el mes siguiente y
+        deja intacto lo ya cobrado.
+      </div>
     </section>
 
     <section class="panel" id="p-eq">
@@ -435,8 +499,9 @@ function renderLista(){
     if(m.nota) meta.push(m.nota);
     var reciente=(Date.now()-new Date(m.creado_en).getTime())<864e5;
     var puede = esAdmin() || (m.registrado_por===yo.id && reciente);
+    var chip = m.suscripcion_id ? '<span class="auto">AUTO</span>' : '';
     return '<div class="mv '+(ing?"":"eg")+'"><div class="stripe"></div>'+
-      '<div><div class="mv-cat">'+esc(m.cuenta_nombre)+'</div>'+
+      '<div><div class="mv-cat">'+esc(m.cuenta_nombre)+chip+'</div>'+
       '<div class="mv-meta">'+esc(meta.join(" · "))+'</div></div>'+
       '<div class="mv-r"><div class="mv-amt">'+(ing?"":"−")+money(m.monto).replace("−","")+'</div>'+
       (puede?'<button class="del" data-id="'+esc(m.id)+'">Eliminar</button>':'')+'</div></div>';
@@ -587,6 +652,147 @@ function cargarEquipo(){
   });
 }
 
+/* ---------------- planes mensuales ---------------- */
+var planes = [];
+
+function nombreMes(iso){            // "2026-03-01" -> "marzo 2026"
+  var nm=["","enero","febrero","marzo","abril","mayo","junio","julio",
+          "agosto","septiembre","octubre","noviembre","diciembre"];
+  var p=String(iso).split("-");
+  return nm[parseInt(p[1],10)]+" "+p[0];
+}
+function mesSiguiente(iso){
+  var p=String(iso).split("-"), y=+p[0], m=+p[1];
+  if(m===12){ y+=1; m=1; } else { m+=1; }
+  return y+"-"+(m<10?"0":"")+m+"-01";
+}
+
+function pintarCuentasPlan(){
+  var s=$("pl-cta"), h="";
+  h+='<optgroup label="Gasto operativo">';
+  cuentas.filter(function(c){return c.grupo==="opex";})
+    .forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
+  h+='</optgroup><optgroup label="Costo directo">';
+  cuentas.filter(function(c){return c.grupo==="costo";})
+    .forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
+  h+='</optgroup>';
+  s.innerHTML=h;
+  var pref=cuentas.filter(function(c){return c.codigo==="soft";})[0];
+  if(pref) s.value="soft";
+}
+
+function cargarPlanes(){
+  sb.from("v_suscripciones").select("*").order("vigente",{ascending:false}).order("nombre")
+    .then(function(r){
+      if(r.error){ $("planes-lista").innerHTML='<div class="empty">No se pudieron cargar los planes.</div>'; return; }
+      planes=r.data||[];
+      renderPlanes();
+    });
+}
+
+function renderPlanes(){
+  var act=planes.filter(function(p){return p.vigente;});
+  var can=planes.filter(function(p){return !p.vigente;});
+
+  var total=act.reduce(function(a,p){ return a+Number(p.monto); },0);
+  $("fijo-total").textContent=money(total);
+  $("fijo-foot").textContent = act.length
+    ? act.length+(act.length===1?" plan activo":" planes activos")+" \u00b7 "+money(total*12)+" al a\u00f1o"
+    : "Sin planes activos";
+
+  var tarjeta=function(p){
+    var d=[p.cuenta_nombre, "d\u00eda "+p.dia_cobro];
+    if(p.vigente){
+      d.push("desde "+nombreMes(p.mes_inicio));
+    } else {
+      d.push("cobrado hasta "+nombreMes(p.mes_fin));
+    }
+    d.push(p.cargos_generados+(p.cargos_generados===1?" cargo":" cargos"));
+    if(p.nota) d.push(p.nota);
+    return '<div class="plan'+(p.vigente?"":" off")+'"><div class="stripe"></div>'+
+      '<div><div class="plan-n">'+esc(p.nombre)+'</div>'+
+      '<div class="plan-d">'+esc(d.join(" \u00b7 "))+'</div></div>'+
+      '<div class="plan-r"><div class="plan-m">'+money(p.monto)+'</div>'+
+      (p.vigente
+        ? '<button class="plan-b danger" data-acc="cancelar" data-id="'+esc(p.id)+'">Cancelar</button>'
+        : '<button class="plan-b" data-acc="reactivar" data-id="'+esc(p.id)+'">Reactivar</button>'+
+          (p.cargos_generados===0 ? '<button class="plan-b danger" data-acc="borrar" data-id="'+esc(p.id)+'">Borrar</button>' : '')
+      )+'</div></div>';
+  };
+
+  var h="";
+  h+='<div class="sub-h">Activos</div>';
+  h+= act.length ? act.map(tarjeta).join("")
+    : '<div class="empty"><span class="rule">Sin planes</span>Agreg&aacute; tu primera suscripci&oacute;n arriba.</div>';
+  if(can.length){
+    h+='<div class="sub-h">Cancelados</div>'+can.map(tarjeta).join("");
+  }
+  $("planes-lista").innerHTML=h;
+
+  Array.prototype.forEach.call($("planes-lista").querySelectorAll("[data-acc]"),function(b){
+    b.onclick=function(){ accionPlan(b.getAttribute("data-acc"), b.getAttribute("data-id")); };
+  });
+}
+
+function accionPlan(acc,id){
+  var p=planes.filter(function(x){return x.id===id;})[0]; if(!p) return;
+
+  if(acc==="cancelar"){
+    var mesActual=hoy().slice(0,7)+"-01";
+    if(!confirm("Cancelar "+p.nombre+"?\n\nSe cobra hasta "+nombreMes(mesActual)+
+                " inclusive. Desde "+nombreMes(mesSiguiente(mesActual))+" deja de descontarse.\n"+
+                "Los cargos ya hechos no se tocan.")) return;
+    sb.from("suscripciones").update({mes_fin:mesActual}).eq("id",id).then(function(r){
+      if(r.error){ toast("No se pudo cancelar",true); return; }
+      toast("Plan cancelado"); cargarPlanes(); cargar();
+    });
+
+  } else if(acc==="reactivar"){
+    sb.from("suscripciones").update({mes_fin:null}).eq("id",id).then(function(r){
+      if(r.error){ toast("No se pudo reactivar",true); return; }
+      toast("Plan reactivado");
+      sb.rpc("generar_cargos_pendientes").then(function(){ cargarPlanes(); cargar(); });
+    });
+
+  } else if(acc==="borrar"){
+    if(!confirm("Borrar "+p.nombre+" definitivamente?")) return;
+    sb.from("suscripciones").delete().eq("id",id).then(function(r){
+      if(r.error){ toast("No se pudo borrar",true); return; }
+      toast("Plan borrado"); cargarPlanes();
+    });
+  }
+}
+
+$("fplan").onsubmit=function(e){
+  e.preventDefault();
+  var monto=parseFloat($("pl-monto").value);
+  var dia=parseInt($("pl-dia").value,10);
+  var desde=$("pl-desde").value;
+  if(!(monto>0)){ toast("Monto inv\u00e1lido",true); return; }
+  if(!(dia>=1&&dia<=31)){ toast("D\u00eda de cobro inv\u00e1lido",true); return; }
+  if(!desde){ toast("Falta el primer mes cobrado",true); return; }
+
+  var b=$("pl-save"); b.disabled=true;
+  sb.from("suscripciones").insert({
+    nombre: $("pl-nombre").value.trim(),
+    monto:  Math.round(monto*100)/100,
+    cuenta: $("pl-cta").value,
+    dia_cobro: dia,
+    mes_inicio: desde+"-01",
+    nota: $("pl-nota").value.trim()||null,
+    creado_por: yo.id
+  }).then(function(r){
+    if(r.error){ b.disabled=false; toast("No se pudo guardar el plan",true); return; }
+    return sb.rpc("generar_cargos_pendientes").then(function(rg){
+      b.disabled=false;
+      $("pl-nombre").value=""; $("pl-monto").value=""; $("pl-nota").value="";
+      var n=(rg&&typeof rg.data==="number")?rg.data:0;
+      toast(n>0 ? "Plan agregado \u00b7 "+n+(n===1?" cargo generado":" cargos generados") : "Plan agregado");
+      cargarPlanes(); cargar();
+    });
+  });
+};
+
 /* ---------------- CSV ---------------- */
 $("csv").onclick=function(){
   if(!movs.length){ toast("No hay movimientos que exportar",true); return; }
@@ -610,7 +816,9 @@ Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),functi
       x.setAttribute("aria-selected",String(x===b)); });
     Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(p){ p.classList.remove("on"); });
     $("p-"+b.getAttribute("data-tab")).classList.add("on");
-    if(b.getAttribute("data-tab")==="eq") cargarEquipo();
+    var t=b.getAttribute("data-tab");
+    if(t==="eq") cargarEquipo();
+    if(t==="planes") cargarPlanes();
     window.scrollTo(0,0);
   };
 });
@@ -625,7 +833,8 @@ $("mes").onchange=cargar;
 /* ---------------- arranque ---------------- */
 function aplicarPermisos(){
   $("tab-pl").hidden = !vePL();
-  $("tab-eq").hidden = !esAdmin();
+  $("tab-eq").hidden     = !esAdmin();
+  $("tab-planes").hidden = !esAdmin();
   $("kpi-mb").hidden = !vePL();
   $("kpi-2").hidden  = !vePL() && !veCostos();
   if(!veCostos()){
@@ -657,7 +866,17 @@ function arrancar(){
       aplicarPermisos();
       var h=hoy(); $("fecha").value=h; $("mes").value=h.slice(0,7);
       return sb.from("cuentas").select("*").eq("activa",true).order("grupo").order("orden")
-        .then(function(rc){ cuentas=rc.data||[]; setTipo("ingreso"); cargar(); });
+        .then(function(rc){
+          cuentas=rc.data||[];
+          setTipo("ingreso");
+          if(esAdmin()){
+            pintarCuentasPlan();
+            $("pl-desde").value = h.slice(0,7);
+            // devenga los cargos de suscripciones que falten, hasta el mes corriente
+            return sb.rpc("generar_cargos_pendientes").then(function(){ cargar(); });
+          }
+          cargar();
+        });
     });
   });
 }
