@@ -126,6 +126,19 @@ form{display:flex;flex-direction:column;gap:14px}
 .note{border-left:2px solid var(--yellow);padding:10px 0 10px 13px;color:var(--gray);font-size:13px;margin-top:18px}
 .note b{color:var(--white)}
 
+/* ---------- margen por linea ---------- */
+.lin{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:baseline;
+  padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.lin:last-child{border-bottom:0}
+.lin.head{background:var(--card2);font-family:var(--fr);font-size:10px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--steel)}
+.lin.tot{background:var(--card);font-weight:600}
+.lin b{font-weight:600}
+.lin span{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.lin .mg{color:var(--yellow)}
+.lin .mg.neg{color:var(--loss)}
+.lin .zz{color:var(--steel)}
+
 /* ---------- planes ---------- */
 .fijo{background:var(--card);border:1px solid var(--line);padding:16px;margin-bottom:20px}
 .fijo .rule{display:block;margin-bottom:7px}
@@ -294,11 +307,17 @@ form{display:flex;flex-direction:column;gap:14px}
       <p class="sec-note" id="plper">—</p>
       <div class="pl" id="pl"></div>
       <div class="note">
-        <b>Margen bruto</b> = Ingresos − Costo directo (transfers, prendas, insumos, maquila).
-        Es el número que valida tu precio mayorista. <b>Utilidad neta</b> descuenta además la
-        operación: nómina, alquiler, software, marketing, envíos y equipo.
+        <b>Margen bruto</b> = Ingresos − Costo directo: lo que se consume por pieza
+        (transfers, prendas, filamento, insumos). Es el n&uacute;mero que valida tu precio.
+        <b>Utilidad neta</b> descuenta adem&aacute;s la operaci&oacute;n: n&oacute;mina,
+        alquiler, software, marketing, env&iacute;os y herramientas.
       </div>
-      <button class="btn ghost" id="csv" style="margin-top:18px">Descargar mes en CSV</button>
+      <h2 class="sec" style="margin-top:30px">MARGEN POR L&Iacute;NEA</h2>
+      <p class="sec-note">Ingresos menos su costo directo, por cada parte del negocio. Los gastos
+        operativos no se reparten ac&aacute;: son estructura compartida.</p>
+      <div class="pl" id="porlinea"></div>
+
+      <button class="btn ghost" id="csv" style="margin-top:22px">Descargar mes en CSV</button>
     </section>
 
     <section class="panel" id="p-planes">
@@ -417,16 +436,35 @@ $("lform").onsubmit=function(e){
 $("salir").onclick=function(){ sb.auth.signOut().then(function(){ location.reload(); }); };
 
 /* ---------------- catálogo ---------------- */
-function pintarCuentas(){
-  var s=$("cta"), h="", g=function(gr){ return cuentas.filter(function(c){return c.grupo===gr;}); };
-  if(tipo==="ingreso"){
-    g("ingreso").forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
-  } else {
-    h+='<optgroup label="Costo directo">';
-    g("costo").forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
-    h+='</optgroup><optgroup label="Gasto operativo">';
-    g("opex").forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
+var ETIQ_LINEA={textil:"Textil DTF","3d":"BBW3D",subli:"Sublimaci\u00f3n",general:"General"};
+var ORDEN_LINEA=["textil","3d","subli","general"];
+
+// Agrupa las cuentas de un grupo por linea de negocio.
+// Si el grupo entero cae en una sola linea, no pone subtitulo de linea.
+function optsPorLinea(grupo, prefijo){
+  var delGrupo=cuentas.filter(function(c){ return c.grupo===grupo; });
+  if(!delGrupo.length) return "";
+  var lineas=ORDEN_LINEA.filter(function(L){
+    return delGrupo.some(function(c){ return (c.linea||"general")===L; });
+  });
+  var h="";
+  lineas.forEach(function(L){
+    var etq = prefijo ? (prefijo+" \u00b7 "+ETIQ_LINEA[L]) : ETIQ_LINEA[L];
+    if(lineas.length===1 && !prefijo) etq = ETIQ_LINEA[L];
+    h+='<optgroup label="'+esc(etq)+'">';
+    delGrupo.filter(function(c){ return (c.linea||"general")===L; })
+      .forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
     h+='</optgroup>';
+  });
+  return h;
+}
+
+function pintarCuentas(){
+  var s=$("cta"), h="";
+  if(tipo==="ingreso"){
+    h = optsPorLinea("ingreso","");
+  } else {
+    h = optsPorLinea("costo","Costo directo") + optsPorLinea("opex","Gasto operativo");
   }
   s.innerHTML=h;
   $("cplbl").textContent = tipo==="ingreso" ? "Cliente" : "Proveedor";
@@ -540,7 +578,46 @@ function renderPL(){
      '</span><span>'+money(t.neta)+'</span></div>';
   $("pl").innerHTML=h;
 }
-function render(){ renderKPI(); renderLista(); renderPL(); }
+var LINEAS=[["textil","Textil DTF"],["3d","BBW3D"],["subli","Sublimaci\u00f3n"],["general","General"]];
+
+function renderPorLinea(){
+  if(!vePL()) return;
+  var acc={};
+  movs.forEach(function(m){
+    var L=m.linea||"general";
+    if(!acc[L]) acc[L]={ing:0,cos:0};
+    if(m.grupo==="ingreso")    acc[L].ing+=Number(m.monto)||0;
+    else if(m.grupo==="costo") acc[L].cos+=Number(m.monto)||0;
+  });
+
+  var h='<div class="lin head"><b>L\u00ednea</b><span>Ingresos</span><span>Costo</span><span>Margen</span></div>';
+  var tI=0,tC=0,hay=false;
+
+  LINEAS.forEach(function(L){
+    var d=acc[L[0]]; if(!d||(d.ing===0&&d.cos===0)) return;
+    hay=true; tI+=d.ing; tC+=d.cos;
+    var mg=d.ing-d.cos;
+    var pct=d.ing>0 ? Math.round(mg/d.ing*100)+"%" : "\u2014";
+    h+='<div class="lin"><b>'+esc(L[1])+'</b>'+
+       '<span class="zz">'+money0(d.ing)+'</span>'+
+       '<span class="zz">'+money0(d.cos)+'</span>'+
+       '<span class="mg'+(mg<0?" neg":"")+'">'+money0(mg)+' <span class="pct">'+pct+'</span></span></div>';
+  });
+
+  if(!hay){
+    $("porlinea").innerHTML='<div class="empty"><span class="rule">Sin datos</span>'+
+      'Todav\u00eda no hay ingresos ni costos este mes.</div>';
+    return;
+  }
+  var tM=tI-tC;
+  h+='<div class="lin tot"><b>Total</b>'+
+     '<span>'+money0(tI)+'</span><span>'+money0(tC)+'</span>'+
+     '<span class="mg'+(tM<0?" neg":"")+'">'+money0(tM)+
+     ' <span class="pct">'+(tI>0?Math.round(tM/tI*100)+"%":"\u2014")+'</span></span></div>';
+  $("porlinea").innerHTML=h;
+}
+
+function render(){ renderKPI(); renderLista(); renderPL(); renderPorLinea(); }
 
 /* ---------------- datos ---------------- */
 function cargar(){
@@ -668,15 +745,8 @@ function mesSiguiente(iso){
 }
 
 function pintarCuentasPlan(){
-  var s=$("pl-cta"), h="";
-  h+='<optgroup label="Gasto operativo">';
-  cuentas.filter(function(c){return c.grupo==="opex";})
-    .forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
-  h+='</optgroup><optgroup label="Costo directo">';
-  cuentas.filter(function(c){return c.grupo==="costo";})
-    .forEach(function(c){ h+='<option value="'+esc(c.codigo)+'">'+esc(c.nombre)+'</option>'; });
-  h+='</optgroup>';
-  s.innerHTML=h;
+  var s=$("pl-cta");
+  s.innerHTML = optsPorLinea("opex","Gasto operativo") + optsPorLinea("costo","Costo directo");
   var pref=cuentas.filter(function(c){return c.codigo==="soft";})[0];
   if(pref) s.value="soft";
 }
@@ -797,10 +867,11 @@ $("fplan").onsubmit=function(e){
 $("csv").onclick=function(){
   if(!movs.length){ toast("No hay movimientos que exportar",true); return; }
   var q=function(v){ return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'; };
-  var filas=[["Fecha","Grupo","Cuenta","Monto USD","Contraparte","Nota","Registró"].map(q).join(",")];
+  var filas=[["Fecha","Linea","Grupo","Cuenta","Monto USD","Contraparte","Nota","Registro","Automatico"].map(q).join(",")];
   movs.slice().reverse().forEach(function(m){
-    filas.push([m.fecha,m.grupo,m.cuenta_nombre,Number(m.monto).toFixed(2),
-      m.contraparte,m.nota,m.registrado_nombre].map(q).join(","));
+    filas.push([m.fecha, ETIQ_LINEA[m.linea||"general"]||"General", m.grupo, m.cuenta_nombre,
+      Number(m.monto).toFixed(2), m.contraparte, m.nota, m.registrado_nombre,
+      m.suscripcion_id ? "si" : ""].map(q).join(","));
   });
   var a=document.createElement("a");
   a.href=URL.createObjectURL(new Blob(["﻿"+filas.join("\r\n")],{type:"text/csv;charset=utf-8;"}));
