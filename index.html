@@ -232,6 +232,12 @@ form{display:flex;flex-direction:column;gap:14px}
       <label class="field" id="lnamef" hidden><span class="rule">Tu nombre</span><input type="text" id="lname" autocomplete="name"></label>
       <button class="btn" type="submit" id="lbtn">Entrar</button>
       <button class="btn ghost" type="button" id="ltoggle">Crear cuenta nueva</button>
+      <button class="btn ghost" type="button" id="lforgot">¿Olvidaste tu contraseña?</button>
+    </form>
+    <form id="rform" hidden>
+      <label class="field"><span class="rule">Nueva contraseña</span><input type="password" id="rpass" autocomplete="new-password" required minlength="6"></label>
+      <label class="field"><span class="rule">Repetir contraseña</span><input type="password" id="rpass2" autocomplete="new-password" required minlength="6"></label>
+      <button class="btn" type="submit" id="rbtn">Guardar contraseña</button>
     </form>
   </div>
 </div>
@@ -430,6 +436,38 @@ $("lform").onsubmit=function(e){
       return;
     }
     if(modoAlta && !r.data.session){ lmsg("Cuenta creada. Confirmá el correo y después entrá."); return; }
+    arrancar();
+  });
+};
+$("lforgot").onclick=function(){
+  var mail=$("lmail").value.trim();
+  if(!mail){ lmsg("Escribí tu correo arriba y tocá de nuevo.",true); return; }
+  $("lforgot").disabled=true;
+  sb.auth.resetPasswordForEmail(mail,{redirectTo:location.origin+location.pathname}).then(function(r){
+    $("lforgot").disabled=false;
+    if(r.error){ lmsg(r.error.message||"No se pudo enviar el correo.",true); return; }
+    lmsg("Listo. Si ese correo tiene cuenta, te llegó un enlace para crear una contraseña nueva (revisá spam).");
+  });
+};
+
+var recuperando = /type=recovery/.test(location.hash);
+function mostrarRecuperacion(){
+  recuperando=true;
+  $("lform").hidden=true; $("rform").hidden=false; $("login").hidden=false; $("app").hidden=true;
+  lmsg("Escribí tu contraseña nueva.");
+}
+sb.auth.onAuthStateChange(function(ev){ if(ev==="PASSWORD_RECOVERY") mostrarRecuperacion(); });
+$("rform").onsubmit=function(e){
+  e.preventDefault(); lmsg("");
+  var p=$("rpass").value;
+  if(p!==$("rpass2").value){ lmsg("Las contraseñas no coinciden.",true); return; }
+  $("rbtn").disabled=true;
+  sb.auth.updateUser({password:p}).then(function(r){
+    $("rbtn").disabled=false;
+    if(r.error){ lmsg(r.error.message||"No se pudo guardar.",true); return; }
+    recuperando=false;
+    history.replaceState(null,"",location.pathname);
+    $("rform").hidden=true; $("lform").hidden=false;
     arrancar();
   });
 };
@@ -953,7 +991,8 @@ function arrancar(){
 }
 
 sb.auth.getSession().then(function(s){
-  if(s.data && s.data.session) arrancar();
+  if(recuperando){ if(s.data && s.data.session) mostrarRecuperacion(); else { $("login").hidden=false; $("app").hidden=true; lmsg("El enlace venció. Pedí uno nuevo con «¿Olvidaste tu contraseña?».",true); } }
+  else if(s.data && s.data.session) arrancar();
   else { $("login").hidden=false; $("app").hidden=true; }
 });
 })();
