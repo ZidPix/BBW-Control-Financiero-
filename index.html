@@ -88,6 +88,7 @@ nav.tabs button{flex:1;background:none;border:0;cursor:pointer;padding:11px 4px 
   border-top:2px solid transparent;margin-top:-1px;display:flex;flex-direction:column;align-items:center;gap:5px}
 nav.tabs button[aria-selected=true]{color:var(--yellow);border-top-color:var(--yellow)}
 nav.tabs button:focus-visible{outline:2px solid var(--yellow);outline-offset:-3px}
+nav.tabs .lg{display:none}
 
 .panel{display:none;padding-top:18px}
 .panel.on{display:block}
@@ -125,6 +126,54 @@ form{display:flex;flex-direction:column;gap:14px}
 .pct{font-family:var(--fr);font-size:11px;color:var(--steel)}
 .note{border-left:2px solid var(--yellow);padding:10px 0 10px 13px;color:var(--gray);font-size:13px;margin-top:18px}
 .note b{color:var(--white)}
+
+/* ---------- subpaneles de Ajustes ---------- */
+.subpanel{display:none}
+.subpanel.on{display:block}
+h3.sub{font-family:var(--fd);font-size:19px;letter-spacing:.1em;margin:0 0 2px;font-weight:400}
+
+/* ---------- cobrar ---------- */
+.cob{background:var(--card);border:1px solid var(--line);padding:13px 14px;margin-bottom:9px}
+.cob.listo{opacity:.5}
+.cob-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cob-cl{font-weight:600;font-size:15px;line-height:1.25}
+.cob-co{font-size:13px;color:var(--gray);margin-top:2px;line-height:1.35}
+.cob-d{font-family:var(--fr);font-size:11px;color:var(--steel);margin-top:4px}
+.cob-r{text-align:right;flex:0 0 auto}
+.cob-s{font-family:var(--fd);font-size:23px;font-variant-numeric:tabular-nums;color:var(--yellow);line-height:1}
+.cob.listo .cob-s{color:var(--steel)}
+.cob-t{font-family:var(--fr);font-size:10px;color:var(--steel);margin-top:3px}
+.est{display:inline-block;font-family:var(--fr);font-size:9px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;padding:3px 7px;border:1px solid var(--line);color:var(--gray);margin-top:6px}
+.est.parcial{border-color:var(--yellow);color:var(--yellow)}
+.est.vencido{border-color:var(--loss);color:var(--loss)}
+.est.cobrado{border-color:var(--steel);color:var(--steel)}
+.cob-acc{display:flex;gap:16px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+.cob-acc button{background:none;border:0;cursor:pointer;padding:0;font-family:var(--fr);
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+.cob-acc button:hover{color:var(--yellow)}
+.cob-acc button.danger:hover{color:var(--loss)}
+
+/* ---------- activos ---------- */
+.act{background:var(--card);border:1px solid var(--line);padding:14px;margin-bottom:10px}
+.act.off{opacity:.55}
+.act-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.act-n{font-weight:600;font-size:15px;line-height:1.25}
+.act-d{font-family:var(--fr);font-size:11px;color:var(--steel);margin-top:3px}
+.act-c{font-family:var(--fd);font-size:22px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.barra{height:4px;background:var(--card2);margin:12px 0 10px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--yellow)}
+.act-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.act-g div{min-width:0}
+.act-g .k{font-family:var(--fr);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.act-g .v{font-family:var(--fd);font-size:19px;font-variant-numeric:tabular-nums;margin-top:2px}
+.rec{border-top:1px solid var(--line);margin-top:12px;padding-top:11px;font-size:13px;line-height:1.45;color:var(--gray)}
+.rec b{color:var(--yellow);font-weight:600}
+.act-acc{display:flex;gap:16px;margin-top:11px}
+.act-acc button{background:none;border:0;cursor:pointer;padding:0;font-family:var(--fr);
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+.act-acc button:hover{color:var(--yellow)}
+.act-acc button.danger:hover{color:var(--loss)}
 
 /* ---------- margen por linea ---------- */
 .lin{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:baseline;
@@ -210,6 +259,8 @@ form{display:flex;flex-direction:column;gap:14px}
   nav.tabs{position:static;border-top:0;border-bottom:1px solid var(--line);background:transparent;max-width:920px;margin:18px auto 0;padding:0 var(--pad)}
   nav.tabs button{flex:0 0 auto;padding:10px 18px;border-top:0;border-bottom:2px solid transparent;margin:0 0 -1px;flex-direction:row;gap:8px}
   nav.tabs button[aria-selected=true]{border-top-color:transparent;border-bottom-color:var(--yellow)}
+  nav.tabs .lg{display:inline}
+  nav.tabs .sm{display:none}
   .toast{bottom:28px}
 }
 </style>
@@ -232,12 +283,6 @@ form{display:flex;flex-direction:column;gap:14px}
       <label class="field" id="lnamef" hidden><span class="rule">Tu nombre</span><input type="text" id="lname" autocomplete="name"></label>
       <button class="btn" type="submit" id="lbtn">Entrar</button>
       <button class="btn ghost" type="button" id="ltoggle">Crear cuenta nueva</button>
-      <button class="btn ghost" type="button" id="lforgot">¿Olvidaste tu contraseña?</button>
-    </form>
-    <form id="rform" hidden>
-      <label class="field"><span class="rule">Nueva contraseña</span><input type="password" id="rpass" autocomplete="new-password" required minlength="6"></label>
-      <label class="field"><span class="rule">Repetir contraseña</span><input type="password" id="rpass2" autocomplete="new-password" required minlength="6"></label>
-      <button class="btn" type="submit" id="rbtn">Guardar contraseña</button>
     </form>
   </div>
 </div>
@@ -255,15 +300,15 @@ form{display:flex;flex-direction:column;gap:14px}
 
   <nav class="tabs" role="tablist">
     <button role="tab" aria-selected="true" data-tab="reg">
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 3v11M3 8.5h11"/></svg>Registrar</button>
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 3v11M3 8.5h11"/></svg><span class="lg">Registrar</span><span class="sm">Nuevo</span></button>
     <button role="tab" aria-selected="false" data-tab="mov">
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 4.5h12M2.5 8.5h12M2.5 12.5h8"/></svg>Movimientos</button>
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 4.5h12M2.5 8.5h12M2.5 12.5h8"/></svg><span class="lg">Movimientos</span><span class="sm">Movs</span></button>
+    <button role="tab" aria-selected="false" data-tab="cobrar" id="tab-cobrar">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1.5" y="4" width="14" height="9.5" rx="1"/><path d="M1.5 7h14"/><path d="M4 10.5h3"/></svg><span class="lg">Cobrar</span><span class="sm">Cobrar</span></button>
     <button role="tab" aria-selected="false" data-tab="pl" id="tab-pl" hidden>
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 14V9M6.8 14V4M11.2 14V7M15.5 14V2.5"/></svg>P&amp;L</button>
-    <button role="tab" aria-selected="false" data-tab="planes" id="tab-planes" hidden>
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8.5a6.5 6.5 0 1 1-1.9-4.6"/><path d="M8.5 5v3.7l2.6 1.5"/><path d="M15 2v3.4h-3.4"/></svg>Planes</button>
-    <button role="tab" aria-selected="false" data-tab="eq" id="tab-eq" hidden>
-      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8.5" cy="6" r="2.6"/><path d="M3.5 14c0-2.5 2.2-4.2 5-4.2s5 1.7 5 4.2"/></svg>Equipo</button>
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 14V9M6.8 14V4M11.2 14V7M15.5 14V2.5"/></svg><span class="lg">P&amp;L</span><span class="sm">P&amp;L</span></button>
+    <button role="tab" aria-selected="false" data-tab="ajustes" id="tab-ajustes" hidden>
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8.5" cy="8.5" r="2.4"/><path d="M8.5 1.5v2M8.5 13.5v2M1.5 8.5h2M13.5 8.5h2M3.6 3.6l1.4 1.4M12 12l1.4 1.4M13.4 3.6 12 5M5 12l-1.4 1.4"/></svg><span class="lg">Ajustes</span><span class="sm">Ajustes</span></button>
   </nav>
 
   <div class="wrap">
@@ -308,6 +353,45 @@ form{display:flex;flex-direction:column;gap:14px}
       <div id="lista"></div>
     </section>
 
+    <section class="panel" id="p-cobrar">
+      <h2 class="sec">CUENTAS POR COBRAR</h2>
+      <p class="sec-note">Lo que te deben. <b>No entra al P&amp;L hasta que se cobra</b> &mdash;
+        cada pago o abono crea el ingreso del d&iacute;a en que entr&oacute; la plata.</p>
+
+      <div class="kpis" style="margin:0 0 20px">
+        <div class="kpi hero"><span class="rule">Por cobrar</span>
+          <span class="val v-y" id="cob-total">$0</span>
+          <div class="foot" id="cob-foot">Nadie te debe nada</div></div>
+        <div class="kpi"><span class="rule">Vencido</span>
+          <span class="val v-w" id="cob-vencido">$0</span>
+          <div class="foot" id="cob-vfoot">&mdash;</div></div>
+        <div class="kpi"><span class="rule">Cobrado este mes</span>
+          <span class="val v-w" id="cob-mes">$0</span></div>
+      </div>
+
+      <form id="fcob" autocomplete="off">
+        <label class="field"><span class="rule">Cliente</span>
+          <input type="text" id="cb-cli" placeholder="Nombre o empresa" required></label>
+        <label class="field"><span class="rule">Concepto</span>
+          <input type="text" id="cb-con" placeholder="12 camisetas Majao" required></label>
+        <div class="row2">
+          <label class="field"><span class="rule">Monto USD</span>
+            <input type="number" id="cb-monto" step="0.01" min="0.01" inputmode="decimal" placeholder="0.00" required></label>
+          <label class="field"><span class="rule">Vence</span>
+            <input type="date" id="cb-vence"></label>
+        </div>
+        <label class="field"><span class="rule">Categor&iacute;a de la venta</span><select id="cb-cta" required></select></label>
+        <button class="btn" type="submit" id="cb-save">Agregar cobro</button>
+      </form>
+
+      <div class="seg three" role="group" aria-label="Filtro" id="segcob" style="margin:20px 0 14px">
+        <button type="button" class="fc" data-f="abiertos" aria-pressed="true">Abiertos</button>
+        <button type="button" class="fc" data-f="vencidos" aria-pressed="false">Vencidos</button>
+        <button type="button" class="fc" data-f="todos"    aria-pressed="false">Todos</button>
+      </div>
+      <div id="cobros-lista"></div>
+    </section>
+
     <section class="panel" id="p-pl">
       <h2 class="sec">ESTADO DE RESULTADOS</h2>
       <p class="sec-note" id="plper">—</p>
@@ -326,8 +410,16 @@ form{display:flex;flex-direction:column;gap:14px}
       <button class="btn ghost" id="csv" style="margin-top:22px">Descargar mes en CSV</button>
     </section>
 
-    <section class="panel" id="p-planes">
-      <h2 class="sec">PLANES MENSUALES</h2>
+    <section class="panel" id="p-ajustes">
+      <h2 class="sec">AJUSTES</h2>
+      <p class="sec-note">Lo que se configura una vez y casi no se toca.</p>
+      <div class="seg three" role="group" aria-label="Secci&oacute;n" id="segaj" style="margin-bottom:20px">
+        <button type="button" class="aj" data-sub="planes"  aria-pressed="true">Planes</button>
+        <button type="button" class="aj" data-sub="activos" aria-pressed="false">Activos</button>
+        <button type="button" class="aj" data-sub="eq"      aria-pressed="false">Equipo</button>
+      </div>
+    <section class="subpanel on" id="sp-planes">
+      <h3 class="sub">PLANES MENSUALES</h3>
       <p class="sec-note">Suscripciones y cargos fijos. Los cargas una vez y el gasto se descuenta solo todos los meses, hasta que los canceles.</p>
 
       <div class="fijo">
@@ -363,8 +455,52 @@ form{display:flex;flex-direction:column;gap:14px}
       </div>
     </section>
 
-    <section class="panel" id="p-eq">
-      <h2 class="sec">EQUIPO</h2>
+    <section class="subpanel" id="sp-activos">
+      <h3 class="sub">ACTIVOS</h3>
+      <p class="sec-note">Equipo que dura a&ntilde;os. No es gasto de un mes: su costo se reparte
+        en la vida &uacute;til. La depreciaci&oacute;n s&iacute; pesa en el P&amp;L, pero no es plata
+        que sale &mdash; por eso no entra en la carga fija de los Planes.</p>
+
+      <div class="kpis" style="margin:0 0 20px">
+        <div class="kpi hero"><span class="rule">Valor en libros</span>
+          <span class="val v-y" id="act-libros">$0</span>
+          <div class="foot" id="act-foot">Sin activos</div></div>
+        <div class="kpi"><span class="rule">Depreciaci&oacute;n mensual</span>
+          <span class="val v-w" id="act-cuota">$0</span></div>
+        <div class="kpi"><span class="rule">Invertido</span>
+          <span class="val v-w" id="act-costo">$0</span></div>
+      </div>
+
+      <form id="fact" autocomplete="off">
+        <label class="field"><span class="rule">Qu&eacute; compraste</span>
+          <input type="text" id="ac-nombre" placeholder="Impresora 3D" required></label>
+        <div class="row2">
+          <label class="field"><span class="rule">Costo USD</span>
+            <input type="number" id="ac-monto" step="0.01" min="0.01" inputmode="decimal" placeholder="0.00" required></label>
+          <label class="field"><span class="rule">Vida &uacute;til (meses)</span>
+            <input type="number" id="ac-meses" min="1" max="240" value="24" required></label>
+        </div>
+        <label class="field"><span class="rule">Cuenta de depreciaci&oacute;n</span><select id="ac-cta" required></select></label>
+        <label class="field"><span class="rule">Mes de compra</span>
+          <input type="month" id="ac-desde" required></label>
+        <label class="field"><span class="rule">Nota</span>
+          <input type="text" id="ac-nota" placeholder="Modelo, proveedor, garant&iacute;a"></label>
+        <button class="btn" type="submit" id="ac-save">Agregar activo</button>
+      </form>
+
+      <div id="activos-lista"></div>
+
+      <div class="note" style="margin-top:22px">
+        <b>Regla.</b> M&aacute;s de $100 y dura m&aacute;s de un a&ntilde;o &rarr; va ac&aacute;, repartido.
+        Menos que eso &rarr; gasto directo del mes. <b>Recuperado</b> compara lo que gener&oacute; la
+        l&iacute;nea del activo desde que entr&oacute; en servicio contra lo que cost&oacute;: no es
+        atribuci&oacute;n exacta, pero para una l&iacute;nea que existe gracias a esa m&aacute;quina
+        es la lectura justa.
+      </div>
+    </section>
+
+    <section class="subpanel" id="sp-eq">
+      <h3 class="sub">EQUIPO</h3>
       <p class="sec-note">Cada permiso está aplicado en la base de datos, no solo en pantalla. Los cambios entran la próxima vez que la persona recarga.</p>
       <div id="equipo"></div>
       <div class="note" style="margin-top:20px">
@@ -373,6 +509,7 @@ form{display:flex;flex-direction:column;gap:14px}
         rentabilidad quede realmente fuera de su alcance, dejale <b>apagado "ve los movimientos de
         todos"</b>: así solo ve lo que él mismo cargó y no tiene con qué calcularla.
       </div>
+    </section>
     </section>
   </div>
 </div>
@@ -436,38 +573,6 @@ $("lform").onsubmit=function(e){
       return;
     }
     if(modoAlta && !r.data.session){ lmsg("Cuenta creada. Confirmá el correo y después entrá."); return; }
-    arrancar();
-  });
-};
-$("lforgot").onclick=function(){
-  var mail=$("lmail").value.trim();
-  if(!mail){ lmsg("Escribí tu correo arriba y tocá de nuevo.",true); return; }
-  $("lforgot").disabled=true;
-  sb.auth.resetPasswordForEmail(mail,{redirectTo:location.origin+location.pathname}).then(function(r){
-    $("lforgot").disabled=false;
-    if(r.error){ lmsg(r.error.message||"No se pudo enviar el correo.",true); return; }
-    lmsg("Listo. Si ese correo tiene cuenta, te llegó un enlace para crear una contraseña nueva (revisá spam).");
-  });
-};
-
-var recuperando = /type=recovery/.test(location.hash);
-function mostrarRecuperacion(){
-  recuperando=true;
-  $("lform").hidden=true; $("rform").hidden=false; $("login").hidden=false; $("app").hidden=true;
-  lmsg("Escribí tu contraseña nueva.");
-}
-sb.auth.onAuthStateChange(function(ev){ if(ev==="PASSWORD_RECOVERY") mostrarRecuperacion(); });
-$("rform").onsubmit=function(e){
-  e.preventDefault(); lmsg("");
-  var p=$("rpass").value;
-  if(p!==$("rpass2").value){ lmsg("Las contraseñas no coinciden.",true); return; }
-  $("rbtn").disabled=true;
-  sb.auth.updateUser({password:p}).then(function(r){
-    $("rbtn").disabled=false;
-    if(r.error){ lmsg(r.error.message||"No se pudo guardar.",true); return; }
-    recuperando=false;
-    history.replaceState(null,"",location.pathname);
-    $("rform").hidden=true; $("lform").hidden=false;
     arrancar();
   });
 };
@@ -901,6 +1006,275 @@ $("fplan").onsubmit=function(e){
   });
 };
 
+/* ---------------- cuentas por cobrar ---------------- */
+var cobros = [], filtroCob = "abiertos";
+
+function pintarCuentasCobro(){
+  $("cb-cta").innerHTML = optsPorLinea("ingreso","");
+}
+
+function cargarCobros(){
+  sb.from("v_cobros").select("*").order("fecha_emision",{ascending:false})
+    .then(function(r){
+      if(r.error){ $("cobros-lista").innerHTML='<div class="empty">No se pudieron cargar los cobros.</div>'; return; }
+      cobros=r.data||[];
+      renderCobros();
+    });
+}
+
+function renderCobros(){
+  var abiertos=cobros.filter(function(c){ return !c.anulado && Number(c.saldo)>0; });
+  var total=abiertos.reduce(function(t,c){ return t+Number(c.saldo); },0);
+  var venc =abiertos.filter(function(c){ return c.dias_vencido>0; });
+  var vtot =venc.reduce(function(t,c){ return t+Number(c.saldo); },0);
+
+  $("cob-total").textContent=money0(total);
+  $("cob-foot").textContent = abiertos.length
+    ? abiertos.length+(abiertos.length===1?" cobro abierto":" cobros abiertos")
+    : "Nadie te debe nada";
+  var ev=$("cob-vencido");
+  ev.textContent=money0(vtot);
+  ev.className="val "+(vtot>0?"v-l":"v-w");
+  $("cob-vfoot").textContent = venc.length
+    ? venc.length+(venc.length===1?" cobro":" cobros")+" \u00b7 hasta "+
+      Math.max.apply(null,venc.map(function(c){return c.dias_vencido;}))+" d\u00edas"
+    : "Nada vencido";
+
+  // cobrado este mes: movs ya viene filtrado al periodo elegido
+  var cobradoMes=movs.filter(function(m){ return m.cobro_id && m.grupo==="ingreso"; })
+                     .reduce(function(t,m){ return t+Number(m.monto); },0);
+  $("cob-mes").textContent=money0(cobradoMes);
+
+  var vis=cobros.filter(function(c){
+    if(filtroCob==="todos")    return true;
+    if(filtroCob==="vencidos") return !c.anulado && Number(c.saldo)>0 && c.dias_vencido>0;
+    return !c.anulado && Number(c.saldo)>0;
+  });
+
+  if(!vis.length){
+    $("cobros-lista").innerHTML='<div class="empty"><span class="rule">Sin cobros</span>'+
+      (filtroCob==="vencidos"?"Nada vencido. Bien ah\u00ed.":"No hay cobros con este filtro.")+'</div>';
+    return;
+  }
+
+  $("cobros-lista").innerHTML=vis.map(function(c){
+    var saldo=Number(c.saldo), monto=Number(c.monto), cobrado=Number(c.cobrado);
+    var listo=c.anulado||saldo<=0;
+    var d=[];
+    var fe=c.fecha_emision.split("-"); d.push(fe[2]+"/"+fe[1]);
+    d.push(c.cuenta_nombre);
+    if(cobrado>0 && saldo>0) d.push("abonado "+money(cobrado)+" de "+money(monto));
+    if(c.nota) d.push(c.nota);
+
+    var est="";
+    if(c.anulado)            est='<span class="est">Anulado</span>';
+    else if(saldo<=0)        est='<span class="est cobrado">Cobrado</span>';
+    else if(c.dias_vencido>0)est='<span class="est vencido">Vencido '+c.dias_vencido+' d</span>';
+    else if(cobrado>0)       est='<span class="est parcial">Abonado</span>';
+
+    var acc="";
+    if(!listo){
+      acc='<div class="cob-acc">'+
+          '<button data-acc="pago" data-id="'+esc(c.id)+'">Registrar pago</button>'+
+          '<button data-acc="total" data-id="'+esc(c.id)+'">Cobrar todo</button>'+
+          (esAdmin()?'<button class="danger" data-acc="anular" data-id="'+esc(c.id)+'">Anular</button>':'')+
+          '</div>';
+    }
+
+    return '<div class="cob'+(listo?" listo":"")+'">'+
+      '<div class="cob-top"><div><div class="cob-cl">'+esc(c.cliente)+'</div>'+
+      '<div class="cob-co">'+esc(c.concepto)+'</div>'+
+      '<div class="cob-d">'+esc(d.join(" \u00b7 "))+'</div>'+est+'</div>'+
+      '<div class="cob-r"><div class="cob-s">'+money(saldo>0?saldo:monto)+'</div>'+
+      '<div class="cob-t">'+(saldo>0&&cobrado>0?"saldo":"total")+'</div></div></div>'+
+      acc+'</div>';
+  }).join("");
+
+  Array.prototype.forEach.call($("cobros-lista").querySelectorAll("[data-acc]"),function(b){
+    b.onclick=function(){ accionCobro(b.getAttribute("data-acc"), b.getAttribute("data-id")); };
+  });
+}
+
+function accionCobro(acc,id){
+  var c=cobros.filter(function(x){return x.id===id;})[0]; if(!c) return;
+  var saldo=Number(c.saldo);
+
+  if(acc==="anular"){
+    if(!confirm("Anular el cobro de "+c.cliente+"?\n\n"+c.concepto+" \u00b7 "+money(saldo)+
+                "\nLos abonos ya cobrados no se tocan.")) return;
+    sb.from("cobros").update({anulado:true}).eq("id",id).then(function(r){
+      if(r.error){ toast("No se pudo anular",true); return; }
+      toast("Cobro anulado"); cargarCobros();
+    });
+    return;
+  }
+
+  var monto = saldo;
+  if(acc==="pago"){
+    var txt=prompt("Abono de "+c.cliente+"\nSaldo: "+money(saldo)+"\n\n\u00bfCu\u00e1nto entr\u00f3?",
+                   saldo.toFixed(2));
+    if(txt===null) return;
+    monto=parseFloat(String(txt).replace(",","."));
+    if(!(monto>0)){ toast("Monto inv\u00e1lido",true); return; }
+    if(monto>saldo+0.001){ toast("Ese monto pasa el saldo de "+money(saldo),true); return; }
+  } else {
+    if(!confirm("Cobrar el total de "+c.cliente+"?\n\n"+money(saldo)+" entra como ingreso hoy.")) return;
+  }
+
+  sb.rpc("registrar_pago",{p_cobro_id:id, p_monto:Math.round(monto*100)/100, p_fecha:hoy()})
+    .then(function(r){
+      if(r.error){ toast(r.error.message||"No se pudo registrar el pago",true); return; }
+      var resto=(r.data&&r.data.length?Number(r.data[0].saldo):0);
+      toast(resto>0 ? "Abono de "+money(monto)+" \u00b7 queda "+money(resto)
+                    : "Cobrado \u00b7 "+money(monto));
+      cargarCobros(); cargar();
+    });
+}
+
+$("fcob").onsubmit=function(e){
+  e.preventDefault();
+  var monto=parseFloat($("cb-monto").value);
+  if(!(monto>0)){ toast("Monto inv\u00e1lido",true); return; }
+  var b=$("cb-save"); b.disabled=true;
+  sb.from("cobros").insert({
+    cliente:$("cb-cli").value.trim(), concepto:$("cb-con").value.trim(),
+    monto:Math.round(monto*100)/100, cuenta:$("cb-cta").value,
+    fecha_vence:$("cb-vence").value||null, creado_por:yo.id
+  }).then(function(r){
+    b.disabled=false;
+    if(r.error){ toast("No se pudo guardar el cobro",true); return; }
+    $("cb-cli").value=""; $("cb-con").value=""; $("cb-monto").value=""; $("cb-vence").value="";
+    toast("Cobro agregado \u00b7 "+money(monto));
+    cargarCobros();
+  });
+};
+
+/* ---------------- activos ---------------- */
+var activos = [];
+
+function pintarCuentasActivo(){
+  var s=$("ac-cta");
+  s.innerHTML = optsPorLinea("opex","Gasto operativo") + optsPorLinea("costo","Costo directo");
+  var pref=cuentas.filter(function(c){return c.codigo==="3d_deprec";})[0];
+  if(pref) s.value="3d_deprec";
+}
+
+function cargarActivos(){
+  sb.from("v_activos").select("*").order("vigente",{ascending:false}).order("mes_inicio",{ascending:false})
+    .then(function(r){
+      if(r.error){ $("activos-lista").innerHTML='<div class="empty">No se pudieron cargar los activos.</div>'; return; }
+      activos=r.data||[];
+      renderActivos();
+    });
+}
+
+function renderActivos(){
+  var viv=activos.filter(function(a){ return a.vigente && Number(a.valor_libros)>0; });
+  var libros=viv.reduce(function(t,a){ return t+Number(a.valor_libros); },0);
+  var costo =activos.filter(function(a){return a.vigente;}).reduce(function(t,a){ return t+Number(a.monto); },0);
+  var cuota =viv.reduce(function(t,a){ return t+Number(a.cuota); },0);
+
+  $("act-libros").textContent=money0(libros);
+  $("act-cuota").textContent=money(cuota);
+  $("act-costo").textContent=money0(costo);
+  $("act-foot").textContent = activos.length
+    ? activos.length+(activos.length===1?" activo":" activos")+
+      (costo>0 ? " \u00b7 "+Math.round(libros/costo*100)+"% sin depreciar" : "")
+    : "Sin activos";
+
+  if(!activos.length){
+    $("activos-lista").innerHTML='<div class="empty"><span class="rule">Sin activos</span>'+
+      'Agreg\u00e1 arriba la primera m\u00e1quina o equipo.</div>';
+    return;
+  }
+
+  $("activos-lista").innerHTML=activos.map(function(a){
+    var monto=Number(a.monto), dep=Number(a.depreciado), libros=Number(a.valor_libros);
+    var pct=monto>0?Math.min(100,Math.round(dep/monto*100)):0;
+    var margen=Number(a.margen_linea)||0;
+    var falta=monto-margen;
+
+    var d=[a.cuenta_nombre, a.meses+" meses", money(a.cuota)+"/mes"];
+    if(a.nota) d.push(a.nota);
+
+    var rec;
+    if(margen >= monto){
+      rec='<div class="rec"><b>Ya se pag\u00f3.</b> La l\u00ednea gener\u00f3 '+money(margen)+
+          ' de margen desde que entr\u00f3 \u2014 '+money(margen-monto)+' por encima de lo que cost\u00f3.</div>';
+    } else {
+      var p=monto>0?Math.round(margen/monto*100):0;
+      rec='<div class="rec">Recuperado <b>'+money(margen)+' de '+money(monto)+'</b> ('+p+'%). '+
+          'Faltan '+money(falta)+' de margen para que se pague sola.</div>';
+    }
+
+    return '<div class="act'+(a.vigente?"":" off")+'">'+
+      '<div class="act-top"><div><div class="act-n">'+esc(a.nombre)+'</div>'+
+      '<div class="act-d">'+esc(d.join(" \u00b7 "))+'</div></div>'+
+      '<div class="act-c">'+money(monto)+'</div></div>'+
+      '<div class="barra"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="act-g">'+
+        '<div><div class="k">Depreciado</div><div class="v">'+money(dep)+'</div></div>'+
+        '<div><div class="k">Valor en libros</div><div class="v">'+money(libros)+'</div></div>'+
+      '</div>'+
+      '<div class="act-d" style="margin-top:8px">'+a.cuotas_hechas+' de '+a.meses+
+        ' cuotas'+(a.cuotas_faltan>0?' \u00b7 faltan '+a.cuotas_faltan:' \u00b7 depreciado por completo')+'</div>'+
+      rec+
+      '<div class="act-acc">'+
+        (a.vigente?'<button data-acc="baja" data-id="'+esc(a.id)+'">Dar de baja</button>':'')+
+        (Number(a.cuotas_hechas)===0?'<button class="danger" data-acc="borrar" data-id="'+esc(a.id)+'">Borrar</button>':'')+
+      '</div></div>';
+  }).join("");
+
+  Array.prototype.forEach.call($("activos-lista").querySelectorAll("[data-acc]"),function(b){
+    b.onclick=function(){ accionActivo(b.getAttribute("data-acc"), b.getAttribute("data-id")); };
+  });
+}
+
+function accionActivo(acc,id){
+  var a=activos.filter(function(x){return x.id===id;})[0]; if(!a) return;
+  if(acc==="baja"){
+    var mesActual=hoy().slice(0,7)+"-01";
+    if(!confirm("Dar de baja "+a.nombre+"?\n\nDeja de depreciarse desde "+
+                nombreMes(mesSiguiente(mesActual))+". Lo ya depreciado no se toca.")) return;
+    sb.from("activos").update({mes_baja:mesActual}).eq("id",id).then(function(r){
+      if(r.error){ toast("No se pudo dar de baja",true); return; }
+      toast("Activo dado de baja"); cargarActivos(); cargar();
+    });
+  } else if(acc==="borrar"){
+    if(!confirm("Borrar "+a.nombre+" definitivamente?")) return;
+    sb.from("activos").delete().eq("id",id).then(function(r){
+      if(r.error){ toast("No se pudo borrar",true); return; }
+      toast("Activo borrado"); cargarActivos();
+    });
+  }
+}
+
+$("fact").onsubmit=function(e){
+  e.preventDefault();
+  var monto=parseFloat($("ac-monto").value), meses=parseInt($("ac-meses").value,10), desde=$("ac-desde").value;
+  if(!(monto>0)){ toast("Costo inv\u00e1lido",true); return; }
+  if(!(meses>=1&&meses<=240)){ toast("Vida \u00fatil inv\u00e1lida",true); return; }
+  if(!desde){ toast("Falta el mes de compra",true); return; }
+  if(monto<100 && !confirm("Son "+money(monto)+", por debajo del umbral de $100.\n\n"+
+      "Lo normal ser\u00eda cargarlo como gasto directo del mes. \u00bfIgual lo registr\u00e1s como activo?")) return;
+
+  var b=$("ac-save"); b.disabled=true;
+  sb.from("activos").insert({
+    nombre:$("ac-nombre").value.trim(), monto:Math.round(monto*100)/100,
+    cuenta:$("ac-cta").value, meses:meses, mes_inicio:desde+"-01",
+    nota:$("ac-nota").value.trim()||null, creado_por:yo.id
+  }).then(function(r){
+    if(r.error){ b.disabled=false; toast("No se pudo guardar el activo",true); return; }
+    return sb.rpc("generar_depreciacion_pendiente").then(function(rg){
+      b.disabled=false;
+      $("ac-nombre").value=""; $("ac-monto").value=""; $("ac-nota").value="";
+      var n=(rg&&typeof rg.data==="number")?rg.data:0;
+      toast(n>0?"Activo agregado \u00b7 "+n+(n===1?" cuota":" cuotas"):"Activo agregado");
+      cargarActivos(); cargar();
+    });
+  });
+};
+
 /* ---------------- CSV ---------------- */
 $("csv").onclick=function(){
   if(!movs.length){ toast("No hay movimientos que exportar",true); return; }
@@ -927,9 +1301,29 @@ Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"),functi
     $("p-"+b.getAttribute("data-tab")).classList.add("on");
     var t=b.getAttribute("data-tab");
     if(t==="eq") cargarEquipo();
-    if(t==="planes") cargarPlanes();
+    if(t==="cobrar")  cargarCobros();
+    if(t==="ajustes") cargarPlanes();
     window.scrollTo(0,0);
   };
+});
+Array.prototype.forEach.call(document.querySelectorAll(".aj"),function(b){
+  b.onclick=function(){
+    var sub=b.getAttribute("data-sub");
+    Array.prototype.forEach.call(document.querySelectorAll(".aj"),function(x){
+      x.setAttribute("aria-pressed",String(x===b)); });
+    Array.prototype.forEach.call(document.querySelectorAll(".subpanel"),function(sp){
+      sp.classList.remove("on"); });
+    $("sp-"+sub).classList.add("on");
+    if(sub==="planes")  cargarPlanes();
+    if(sub==="activos") cargarActivos();
+    if(sub==="eq")      cargarEquipo();
+  };
+});
+Array.prototype.forEach.call(document.querySelectorAll(".fc"),function(b){
+  b.onclick=function(){ filtroCob=b.getAttribute("data-f");
+    Array.prototype.forEach.call(document.querySelectorAll(".fc"),function(x){
+      x.setAttribute("aria-pressed",String(x===b)); });
+    renderCobros(); };
 });
 Array.prototype.forEach.call(document.querySelectorAll(".f"),function(b){
   b.onclick=function(){ filtro=b.getAttribute("data-f");
@@ -942,8 +1336,7 @@ $("mes").onchange=cargar;
 /* ---------------- arranque ---------------- */
 function aplicarPermisos(){
   $("tab-pl").hidden = !vePL();
-  $("tab-eq").hidden     = !esAdmin();
-  $("tab-planes").hidden = !esAdmin();
+  $("tab-ajustes").hidden = !esAdmin();
   $("kpi-mb").hidden = !vePL();
   $("kpi-2").hidden  = !vePL() && !veCostos();
   if(!veCostos()){
@@ -980,9 +1373,14 @@ function arrancar(){
           setTipo("ingreso");
           if(esAdmin()){
             pintarCuentasPlan();
+            pintarCuentasActivo();
+            pintarCuentasCobro();
             $("pl-desde").value = h.slice(0,7);
-            // devenga los cargos de suscripciones que falten, hasta el mes corriente
-            return sb.rpc("generar_cargos_pendientes").then(function(){ cargar(); });
+            $("ac-desde").value = h.slice(0,7);
+            // devenga lo que falte de planes y de depreciacion, hasta el mes corriente
+            return sb.rpc("generar_cargos_pendientes")
+              .then(function(){ return sb.rpc("generar_depreciacion_pendiente"); })
+              .then(function(){ cargar(); });
           }
           cargar();
         });
@@ -991,8 +1389,7 @@ function arrancar(){
 }
 
 sb.auth.getSession().then(function(s){
-  if(recuperando){ if(s.data && s.data.session) mostrarRecuperacion(); else { $("login").hidden=false; $("app").hidden=true; lmsg("El enlace venció. Pedí uno nuevo con «¿Olvidaste tu contraseña?».",true); } }
-  else if(s.data && s.data.session) arrancar();
+  if(s.data && s.data.session) arrancar();
   else { $("login").hidden=false; $("app").hidden=true; }
 });
 })();
